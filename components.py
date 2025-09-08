@@ -39,3 +39,42 @@ def display_conversation_log():
             with st.chat_message("assistant", avatar=ct.AI_ICON_FILE_PATH):
                 display_product(message["content"])
 
+
+def display_product(result):
+    """
+    商品情報の表示
+
+    Args:
+        result: LLMからの回答
+    """
+    logger = logging.getLogger(ct.LOGGER_NAME)
+    print('result:', result)
+    product_lines = result[0].page_content.split("\n")
+    product = {item.split(": ")[0]: item.split(": ")[1] for item in product_lines}
+
+    st.markdown("以下の商品をご提案いたします。")
+
+    st.success(f"""
+            商品名：{product['name']}（商品ID: {product['id']}）\n
+            価格：{product['price']}
+    """)
+
+    if product['stock_status'] == '残りわずか':
+        st.warning('ご好評につき、在庫数が残りわずかです。購入をご希望の場合、お早めのご注文をおすすめいたします。', icon=ct.STOCK_STATUS_ICON_LOW)
+    elif product['stock_status'] == 'なし':
+        st.error('申し訳ございませんが、本商品は在庫切れとなっております。入荷までもうしばらくお待ちください。', icon=ct.STOCK_STATUS_ICON_OUT)
+
+    st.code(f"""
+        商品カテゴリ：{product['category']}\n
+        メーカー：{product['maker']}\n
+        評価：{product['score']}({product['review_number']}件)
+    """, language=None, wrap_lines=True)
+
+    st.image(f"images/products/{product['file_name']}", width=400)
+
+    st.code(product['description'], language=None, wrap_lines=True)
+
+    st.markdown("**こんな方におすすめ！**")
+    st.info(product["recommended_people"])
+
+    st.link_button("商品ページを開く", type="primary", use_container_width=True, url="https://google.com")
