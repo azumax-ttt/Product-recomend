@@ -33,3 +33,9 @@
 - constants.py : 定数管理
 - data/products.csv : 商品データ
 - images/ : 商品画像・アイコン
+
+
+
+https://github.com/user-attachments/assets/f0c2e8aa-ee05-480e-a3df-21d05e2fc0ab
+
+
